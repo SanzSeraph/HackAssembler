@@ -1,0 +1,19 @@
+{
+  "name": "hack-assembler",
+  "version": "1.0.0",
+  "description": "Assembles an .asm file into a .hack file",
+  "main": "dist/main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc",
+    "start": "node dist/main.js"
+  },
+  "author": "Daniel Arant",
+  "license": "ISC",
+  "devDependencies": {
+    "typescript": "^5.5.3"
+  },
+  "dependencies": {
+    "@types/node": "^20.14.9"
+  }
+}
