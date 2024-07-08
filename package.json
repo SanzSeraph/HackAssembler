@@ -3,14 +3,17 @@
   "version": "1.0.0",
   "description": "Assembles an .asm file into a .hack file",
   "main": "dist/main.js",
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jasmine",
     "build": "tsc",
     "start": "node dist/main.js"
   },
   "author": "Daniel Arant",
   "license": "ISC",
   "devDependencies": {
+    "@types/jasmine": "^5.1.4",
+    "jasmine": "^5.1.0",
     "typescript": "^5.5.3"
   },
   "dependencies": {

@@ -3,7 +3,11 @@ import ParseError from "./parse-error";
 import { whitespace } from "./whitespace";
 
 export default class CInstruction extends Instruction {
-    private static legalDestination = [ 'A', 'D', 'M'];
+    private static legalDestination = [ 
+        'A', 
+        'D', 
+        'M'
+    ];
     private static legalComp = [
         'A[\w][+&|-][\w][DM1]',
         'D[\w][+&|-][\w][AM1]',
@@ -43,7 +47,7 @@ export default class CInstruction extends Instruction {
         this._jumpSeparatorIndex = line.indexOf(';');
 
         if (this._jumpSeparatorIndex > 0 && this._destinationSeparatorIndex > 0 && this._jumpSeparatorIndex > this._destinationSeparatorIndex) {
-            this.errors.push(new ParseError('The destination specifier must come before the jump specifier.', this._jumpSeparatorIndex));
+            this.errors.push(new ParseError('The destination specifier must come before the jump specifier.', this.lineNumber, this._jumpSeparatorIndex));
 
             return;
         }
@@ -56,6 +60,10 @@ export default class CInstruction extends Instruction {
 
         if (this._jumpSeparatorIndex > 0) {
             this.parseJump(line);
+        }
+
+        if (this._currentColumn < line.length - 1) {
+            this.errors.push(new ParseError(`Invalid extraneous characters \"${line.substring(this._currentColumn)}\" after C-instruction`, lineNumber, this._currentColumn));
         }
     }
 
@@ -71,11 +79,11 @@ export default class CInstruction extends Instruction {
                 this._currentColumn++;
                 break;
             } else if (this.dest.includes(character)) {
-                this.errors.push(new ParseError(`Destination ${character} has already been specified`, this._currentColumn));
+                this.errors.push(new ParseError(`Destination ${character} has already been specified`, this.lineNumber, this._currentColumn));
             } else if (CInstruction.legalDestination.includes(character)) {
                 this.dest.push(character);
             } else {
-                this.errors.push(new ParseError(`${character} is not a legal destination specifier`, this._currentColumn));
+                this.errors.push(new ParseError(`${character} is not a legal destination specifier`, this.lineNumber, this._currentColumn));
             }
         }
     }
@@ -103,7 +111,7 @@ export default class CInstruction extends Instruction {
         }
 
         if (!result) {
-            this.errors.push(new ParseError(`${compSegment} is not a valid operation`, this._currentColumn));
+            this.errors.push(new ParseError(`${compSegment} is not a valid operation`, this.lineNumber, this._currentColumn));
         }
 
         this.comp = this.stripWhitespace(compSegment);
@@ -113,9 +121,10 @@ export default class CInstruction extends Instruction {
         let jumpSegment = line.substring(this._jumpSeparatorIndex + 1).trim();
 
         if (!CInstruction.legalJump.includes(jumpSegment)) {
-            this.errors.push(new ParseError(`Illegal jump specifier ${jumpSegment}`, this._currentColumn));
+            this.errors.push(new ParseError(`Illegal jump specifier ${jumpSegment}`, this.lineNumber, this._currentColumn));
         } else {
             this.jump = jumpSegment;
+            this._currentColumn = this._jumpSeparatorIndex + 3;
         }
     }
 

@@ -15,7 +15,7 @@ export default class Decimal {
         }
     }
 
-    constructor(line: string) {
+    constructor(line: string, lineNumber: number) {
         this.value = '';
         this.errors = [];
 
@@ -25,7 +25,7 @@ export default class Decimal {
             if (Decimal.legalCharacters.includes(character)) {
                 this.value += character;
             } else {
-                this.errors.push(new ParseError(`${character} is not a valid decimal digit`, this.currentColumn))
+                this.errors.push(new ParseError(`${character} is not a valid decimal digit`, lineNumber, this.currentColumn))
             }
         }
     }

@@ -31,14 +31,14 @@ export default class AInstruction extends Instruction {
                         this.isSymbol = true;
                     }
                 } else {
-                    this.errors.push(new ParseError(`A instructions must begin with a @`, this.currentColumn));
+                    this.errors.push(new ParseError(`A instructions must begin with a @`, this.lineNumber, this.currentColumn));
                 }
             } else {
                 if (this.isSymbol) {
                     this.symbol = new Symbol(line.substring(this.currentColumn));
                     this.currentColumn = this.symbol.currentColumn + 1;
                 } else {
-                    this.decimal = new Decimal(line.substring(this.currentColumn));
+                    this.decimal = new Decimal(line.substring(this.currentColumn), this.lineNumber);
                     this.currentColumn = this.decimal.currentColumn + 1;
                 }
             }

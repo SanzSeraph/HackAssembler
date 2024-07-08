@@ -23,10 +23,10 @@ export default class Label extends Instruction {
                     this.start = true;
                 }
                 else {
-                    this.errors.push(new ParseError('Non-whitespace characters are not allowed outside of a label.', this.currentColumn));
+                    this.errors.push(new ParseError('Non-whitespace characters are not allowed outside of a label.', this.lineNumber, this.currentColumn));
                 }
             } else if (this.end) {
-                this.errors.push(new ParseError('No characters are allowed outside of a label', this.currentColumn))
+                this.errors.push(new ParseError('No characters are allowed outside of a label', this.lineNumber, this.currentColumn))
             } else {
                 if (character === ')') {
                     this.end = this.currentColumn;
