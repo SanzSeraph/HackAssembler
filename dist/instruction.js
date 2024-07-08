@@ -1,6 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-class Instruction {
+export default class Instruction {
     lineNumber;
     errors;
     constructor(lineNumber) {
@@ -8,5 +6,4 @@ class Instruction {
         this.errors = [];
     }
 }
-exports.default = Instruction;
 //# sourceMappingURL=instruction.js.map

@@ -1,13 +1,12 @@
-import { FileHandle, open } from 'node:fs/promises';
 import SymbolTable from './symbolTable';
 import AInstruction from './ainstruction';
 import Instruction from './instruction';
 import Label from './label';
 import Comment from './comment';
 import CInstruction from './cinstruction';
-import os from 'node:os';
 import ParseError from './parse-error';
 import File from './file';
+import { whitespace } from './whitespace';
 
 export default class Parser {
     public errors: ParseError[];
@@ -42,20 +41,42 @@ export default class Parser {
     }
 
     private parseLine(line: string, lineNumber: number) {
-        line.trim();
-
         let instruction: Instruction;
+        let currentColumn = 0;
 
-        if (line.startsWith('@')) {
-            instruction = new AInstruction(line, lineNumber);
-        } else if (line.startsWith('(')) {
-            instruction = new Label(line, lineNumber);
-        } else if (line.startsWith('//')) {
-            instruction = new Comment(line, lineNumber);
-        } else if (line == '') {
-            instruction = new Instruction(lineNumber);
-        } else {
-            instruction = new CInstruction(line,  lineNumber);
+        if (line.length == 0) {
+            return;
+        }
+
+        for (let currentColumn = 0; currentColumn < line.length; currentColumn++) {
+            let character = line[currentColumn];
+
+            if (whitespace.includes(character)) {
+                continue;
+            }
+
+            if (character == '@') {
+                instruction = new AInstruction(line.substring(currentColumn), lineNumber);
+                currentColumn += instruction.length;
+                break;
+            } else if (character == '(') {
+                instruction = new Label(line.substring(currentColumn), lineNumber);
+                currentColumn += instruction.length;
+            } else if (character == '/') {
+                let peek = line[currentColumn + 1];
+
+                if (peek == '/') {
+                    break;
+                } else {
+                    this.errors.push(new ParseError('Orphaned /', lineNumber, currentColumn));
+                }
+            } else {
+                instruction = new CInstruction(line.substring(currentColumn), lineNumber);
+            }
+        }
+
+        if (currentColumn < line.length) {
+            this.errors.push(new ParseError('Invalid characters after operation.', lineNumber, currentColumn));
         }
 
         this._instructions.push(instruction);

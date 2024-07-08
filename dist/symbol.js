@@ -1,6 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-class Symbol {
+export default class Symbol {
     static legalFirst;
     static legalSubsequent;
     value;
@@ -89,5 +87,4 @@ class Symbol {
         return this.value.length;
     }
 }
-exports.default = Symbol;
 //# sourceMappingURL=symbol.js.map

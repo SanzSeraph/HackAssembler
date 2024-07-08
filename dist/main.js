@@ -1,11 +1,13 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const parser_1 = __importDefault(require("./parser"));
+import AssemblyFile from './file';
+import Parser from './parser';
 console.log('Welcome to the Hack Assembler');
 let path = process.argv[2];
-let parser = new parser_1.default();
-parser.parse(path);
+let file = new AssemblyFile(path);
+let parser = new Parser(file);
+parser.parse();
+if (parser.errors?.length) {
+    parser.errors.forEach(err => {
+        console.log(err);
+    });
+}
 //# sourceMappingURL=main.js.map

@@ -1,6 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-class SymbolTable {
+export default class SymbolTable {
     _table = {};
     constructor() {
         this.addSymbol('SP', 0);
@@ -34,5 +32,4 @@ class SymbolTable {
         return this._table[symbol];
     }
 }
-exports.default = SymbolTable;
 //# sourceMappingURL=symbolTable.js.map

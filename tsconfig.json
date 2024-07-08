@@ -1,6 +1,6 @@
 {
     "compilerOptions": {
-        "module": "commonjs",
+        "module": "ESNext",
         "esModuleInterop": true,
         "allowSyntheticDefaultImports": true,
         "target": "ESNext",
@@ -17,6 +17,6 @@
         }
     },
     "include": [
-        "src/**/*"
-, "spec/support/parser.spec.js"    ]
+        "src/**/*"  
+    ]
 }

@@ -5,7 +5,7 @@
   "main": "dist/main.js",
   "type": "module",
   "scripts": {
-    "test": "jasmine",
+    "test": "node --test",
     "build": "tsc",
     "start": "node dist/main.js"
   },

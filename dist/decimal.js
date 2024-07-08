@@ -1,10 +1,5 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const parse_error_1 = __importDefault(require("./parse-error"));
-class Decimal {
+import ParseError from "./parse-error";
+export default class Decimal {
     static legalCharacters;
     value;
     currentColumn;
@@ -15,7 +10,7 @@ class Decimal {
             this.legalCharacters.push(i.toString());
         }
     }
-    constructor(line) {
+    constructor(line, lineNumber) {
         this.value = '';
         this.errors = [];
         for (this.currentColumn = 0; this.currentColumn < line.length; this.currentColumn++) {
@@ -24,10 +19,9 @@ class Decimal {
                 this.value += character;
             }
             else {
-                this.errors.push(new parse_error_1.default(`${character} is not a valid decimal digit`, this.currentColumn));
+                this.errors.push(new ParseError(`${character} is not a valid decimal digit`, lineNumber, this.currentColumn));
             }
         }
     }
 }
-exports.default = Decimal;
 //# sourceMappingURL=decimal.js.map

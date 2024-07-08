@@ -1,6 +1,5 @@
 import Instruction from "./instruction";
 import Symbol from "./symbol";
-import { whitespace } from "./whitespace";
 import ParseError from "./parse-error";
 import Decimal from "./decimal";
 
@@ -11,24 +10,32 @@ export default class AInstruction extends Instruction {
     currentColumn: number;
     isSymbol: boolean;
 
-    constructor(line: string, lineNumber: number) {
-        super(lineNumber);
+    // Assume a string that begins with @
+    constructor(line: string, lineNumber: number, startColumn: number) {
+        super(lineNumber, startColumn);
         this.start = false;
-        this.currentColumn = 0;
+        this.currentColumn = 1;
         this.isSymbol = false;
 
+        if (line.length < 2) {
+            this.errors.push(new ParseError('A-instruction cannot be zero length', lineNumber, startColumn));
+            return;
+        }
+        
         for (this.currentColumn; this.currentColumn < line.length; this.currentColumn++) {
             let character = line[this.currentColumn];
 
+            if (Symbol.legalFirst.includes(character)) {
+                this.symbol = new Symbol(line.substring(this.currentColumn));
+                
+            }
             if (!this.start) {
-                if (whitespace.includes(character)) {
-                    continue;
-                } else if (character === '@') {
+                if (character === '@') {
                     this.start = true;
                     let peek = line[this.currentColumn + 1];
 
                     if (Symbol.legalFirst.includes(peek)) {
-                        this.isSymbol = true;
+                        
                     }
                 } else {
                     this.errors.push(new ParseError(`A instructions must begin with a @`, this.lineNumber, this.currentColumn));
