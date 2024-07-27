@@ -1,40 +1,27 @@
-import Instruction from "./instruction";
-import ParseError from "./parse-error";
-import { whitespace } from "./whitespace";
-import Symbol from './symbol';
-export default class Label extends Instruction {
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const instruction_1 = __importDefault(require("./instruction"));
+const parse_error_1 = __importDefault(require("./parse-error"));
+const symbol_1 = __importDefault(require("./symbol"));
+class Label extends instruction_1.default {
     symbol;
     currentColumn;
-    start;
-    end;
-    constructor(line, lineNumber) {
-        super(lineNumber);
-        for (this.currentColumn = 0; this.currentColumn < line.length; this.currentColumn++) {
-            let character = line[this.currentColumn];
-            if (!this.start) {
-                if (whitespace.includes(character)) {
-                    continue;
-                }
-                else if (character === '(') {
-                    this.start = true;
-                }
-                else {
-                    this.errors.push(new ParseError('Non-whitespace characters are not allowed outside of a label.', this.lineNumber, this.currentColumn));
-                }
-            }
-            else if (this.end) {
-                this.errors.push(new ParseError('No characters are allowed outside of a label', this.lineNumber, this.currentColumn));
-            }
-            else {
-                if (character === ')') {
-                    this.end = this.currentColumn;
-                }
-                else {
-                    this.symbol = new Symbol(line.substring(this.currentColumn, line.indexOf(')')));
-                    this.currentColumn = this.symbol.currentColumn + 1;
-                }
-            }
+    constructor(line, lineNumber, startColumn) {
+        super(lineNumber, startColumn);
+        if (line.indexOf(')') < 0) {
+            this.errors.push(new parse_error_1.default('No matching ) for label', lineNumber, startColumn));
+            return;
+        }
+        // Assume that first character is (
+        this.symbol = new symbol_1.default(line.substring(1, line.indexOf(')')));
+        this.length = this.symbol.length + 2;
+        if (line.length > this.length) {
+            this.errors.push(new parse_error_1.default('Invalid characters after label', lineNumber, this.length));
         }
     }
 }
+exports.default = Label;
 //# sourceMappingURL=label.js.map

@@ -1,8 +1,10 @@
-import { FileHandle } from "fs/promises";
+import { FileHandle } from "node:fs/promises";
 import fsPromises from "node:fs/promises";
+import { WriteStream } from "node:fs";
 import os from "node:os";
+import path from "node:path";
 
-export default class File {
+export default class SourceFile {
     private _path: string;
     private _fileHandle: FileHandle;
     private _contents: string;
@@ -11,6 +13,7 @@ export default class File {
 
     constructor(path: string) {
         this._path = path;
+        this._contents = '';
     }
 
     get numberOfLines() {
@@ -31,21 +34,42 @@ export default class File {
                 throw ex;
             }
             
+            this._lines = [];
+
             return;
         }
         
-        if (this._contents == null) {
-            this._contents = await this._fileHandle.readFile({ encoding: 'utf-8' });
-        }
+        this._contents = await this._fileHandle.readFile({ encoding: 'utf-8' });
+        
+        this._lines = this._contents.split('\n');
 
         return Promise.resolve();
     }
 
-    readLine() {       
-        if (this._lines == null) {
-            this._lines = this._contents.split(os.EOL);
+    async openWrite() {
+        try {
+            this._fileHandle = await fsPromises.open(this._path, 'w');
+        } catch (ex) {
+            throw ex;
         }
+    }
 
+    writeLine(line: string) {
+       this._contents += line + '\n';
+    }
+
+    async flush() {
+        return await this._fileHandle.writeFile(this._contents, {
+            encoding: 'utf-8',
+            flush: true
+        });
+    }
+
+    close() {
+        this._fileHandle.close();
+    }
+
+    readLine() {       
         return this._lines[this.currentLine++];
     }
 }

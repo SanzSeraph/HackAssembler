@@ -1,4 +1,6 @@
-export default class ParseError {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+class ParseError {
     line;
     column;
     message;
@@ -8,4 +10,5 @@ export default class ParseError {
         this.column = column;
     }
 }
+exports.default = ParseError;
 //# sourceMappingURL=parse-error.js.map

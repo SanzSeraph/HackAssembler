@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "Assembles an .asm file into a .hack file",
   "main": "dist/main.js",
-  "type": "module",
   "scripts": {
     "test": "node --test",
     "build": "tsc",

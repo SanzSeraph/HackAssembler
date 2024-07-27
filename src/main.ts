@@ -1,17 +1,19 @@
-import AssemblyFile from './file';
+import SourceFile from './file';
 import Parser from './parser';
+import Translator from './translator';
 
 console.log('Welcome to the Hack Assembler');
 
 let path = process.argv[2];
-let file = new AssemblyFile(path)
+let file = new SourceFile(path)
 
 let parser = new Parser(file);
 
-parser.parse();
+parser.parse().then(async instructions => {
+    let outputFile = new SourceFile('./output.hack');
+    let translator = new Translator(instructions, outputFile);
 
-if (parser.errors?.length) {
-    parser.errors.forEach(err => {
-        console.log(err);
-    })
-}
+    await translator.translateProgram();
+    outputFile.close();
+});
+

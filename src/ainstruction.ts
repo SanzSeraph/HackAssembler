@@ -7,47 +7,34 @@ export default class AInstruction extends Instruction {
     start: boolean;
     decimal: Decimal;
     symbol: Symbol;
-    currentColumn: number;
     isSymbol: boolean;
 
     // Assume a string that begins with @
-    constructor(line: string, lineNumber: number, startColumn: number) {
+    constructor(text: string, lineNumber: number, startColumn: number) {
         super(lineNumber, startColumn);
         this.start = false;
-        this.currentColumn = 1;
+        
         this.isSymbol = false;
 
-        if (line.length < 2) {
+        if (text.length < 2) {
             this.errors.push(new ParseError('A-instruction cannot be zero length', lineNumber, startColumn));
             return;
         }
         
-        for (this.currentColumn; this.currentColumn < line.length; this.currentColumn++) {
-            let character = line[this.currentColumn];
+        if (Symbol.legalFirstPattern.test(text[1])) {
+            this.isSymbol = true;
+            this.symbol = new Symbol(text.substring(1))
+            this.length = this.symbol.length + 1;
 
-            if (Symbol.legalFirst.includes(character)) {
-                this.symbol = new Symbol(line.substring(this.currentColumn));
-                
+            if (this.length < text.length) {
+                this.errors.push(new ParseError('Invalid character after symbol', lineNumber, this.length));
             }
-            if (!this.start) {
-                if (character === '@') {
-                    this.start = true;
-                    let peek = line[this.currentColumn + 1];
+        } else if (Decimal.legalCharactersPattern.test(text[1])) {
+            this.decimal = new Decimal(text.substring(1), lineNumber, startColumn + 1);
+            this.length = this.decimal.length + 1
 
-                    if (Symbol.legalFirst.includes(peek)) {
-                        
-                    }
-                } else {
-                    this.errors.push(new ParseError(`A instructions must begin with a @`, this.lineNumber, this.currentColumn));
-                }
-            } else {
-                if (this.isSymbol) {
-                    this.symbol = new Symbol(line.substring(this.currentColumn));
-                    this.currentColumn = this.symbol.currentColumn + 1;
-                } else {
-                    this.decimal = new Decimal(line.substring(this.currentColumn), this.lineNumber);
-                    this.currentColumn = this.decimal.currentColumn + 1;
-                }
+            if (this.length < text.length) {
+                this.errors.push(new ParseError('Invalid character after decimal', lineNumber, this.length));
             }
         }
     }

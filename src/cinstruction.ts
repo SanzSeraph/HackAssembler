@@ -9,11 +9,11 @@ export default class CInstruction extends Instruction {
         'M'
     ];
     private static legalComp = [
-        'A[\w][+&|-][\w][DM1]',
-        'D[\w][+&|-][\w][AM1]',
-        'M[\w][+&|-][\w][AD1]',
-        '-[\w][ADM1]',
-        '![\w][ADM]',
+        'A[\w]?[+&|-][\w]?[DM1]',
+        'D[\w]?[+&|-][\w]?[AM1]',
+        'M[\w]?[+&|-][\w]?[AD1]',
+        '-[\w]?[ADM1]',
+        '![\w]?[ADM]',
         '[0-1]',
         '[ADM]',
     ];
@@ -35,8 +35,8 @@ export default class CInstruction extends Instruction {
     private _destinationSeparatorIndex: number;
     private _jumpSeparatorIndex: number;
 
-    constructor(line: string, lineNumber: number) {
-        super(lineNumber);
+    constructor(line: string, lineNumber: number, currentColumn: number) {
+        super(lineNumber, currentColumn);
 
         this.dest = [];
         this.comp = '';
@@ -60,10 +60,6 @@ export default class CInstruction extends Instruction {
 
         if (this._jumpSeparatorIndex > 0) {
             this.parseJump(line);
-        }
-
-        if (this._currentColumn < line.length - 1) {
-            this.errors.push(new ParseError(`Invalid extraneous characters \"${line.substring(this._currentColumn)}\" after C-instruction`, lineNumber, this._currentColumn));
         }
     }
 
@@ -105,7 +101,7 @@ export default class CInstruction extends Instruction {
             result = regex.exec(compSegment);
 
             if (result) {
-                this._currentColumn = regex.lastIndex;
+                this._currentColumn += regex.lastIndex;
                 break;
             }
         }

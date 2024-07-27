@@ -1,35 +1,44 @@
-export default class SymbolTable {
-    _table = {};
-    constructor() {
-        this.addSymbol('SP', 0);
-        this.addSymbol('LCL', 1);
-        this.addSymbol('ARG', 2);
-        this.addSymbol('THIS', 3);
-        this.addSymbol('THAT', 4);
-        this.addSymbol('R0', 5);
-        this.addSymbol('R1', 6);
-        this.addSymbol('R2', 7);
-        this.addSymbol('R3', 8);
-        this.addSymbol('R4', 9);
-        this.addSymbol('R5', 10);
-        this.addSymbol('R6', 11);
-        this.addSymbol('R7', 12);
-        this.addSymbol('R8', 13);
-        this.addSymbol('R9', 14);
-        this.addSymbol('R10', 15);
-        this.addSymbol('R11', 16);
-        this.addSymbol('R12', 17);
-        this.addSymbol('R13', 18);
-        this.addSymbol('R14', 19);
-        this.addSymbol('R15', 20);
-        this.addSymbol('SCREEN', 21);
-        this.addSymbol('KBD', 22);
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+class SymbolTable {
+    _table = {
+        'SP': 0,
+        'LCL': 1,
+        'THIS': 3,
+        'ARG': 2,
+        'THAT': 4,
+        'R0': 0,
+        'R1': 1,
+        'R2': 2,
+        'R3': 3,
+        'R4': 4,
+        'R5': 5,
+        'R6': 6,
+        'R7': 7,
+        'R8': 8,
+        'R9': 9,
+        'R10': 10,
+        'R11': 11,
+        'R12': 12,
+        'R13': 13,
+        'R14': 14,
+        'R15': 15,
+        'SCREEN': 16384,
+        'KBD': 24576
+    };
+    _nextFreeVariableAddress = 16;
+    addSymbol(symbol) {
+        this._table[symbol] = this._nextFreeVariableAddress++;
     }
-    addSymbol(symbol, address) {
+    addLabelSymbol(symbol, address) {
         this._table[symbol] = address;
+    }
+    containsSymbol(symbol) {
+        return Object.keys(this._table).includes(symbol);
     }
     getSymbolAddress(symbol) {
         return this._table[symbol];
     }
 }
+exports.default = SymbolTable;
 //# sourceMappingURL=symbolTable.js.map

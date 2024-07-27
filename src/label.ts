@@ -7,34 +7,22 @@ export default class Label extends Instruction {
 
     symbol: Symbol;
     currentColumn: number;
-    start: boolean;
-    end: number;
+    
+    constructor(line: string, lineNumber: number, startColumn: number) {
+        super(lineNumber, startColumn);
 
-    constructor(line: string, lineNumber: number) {
-        super(lineNumber);
+        if (line.indexOf(')') < 0) {
+            this.errors.push(new ParseError('No matching ) for label', lineNumber, startColumn));
 
-        for (this.currentColumn = 0; this.currentColumn < line.length; this.currentColumn++) {
-            let character = line[this.currentColumn];
+            return;
+        }
 
-            if (!this.start) {
-                if (whitespace.includes(character)) {
-                    continue;
-                } else if (character === '(') {
-                    this.start = true;
-                }
-                else {
-                    this.errors.push(new ParseError('Non-whitespace characters are not allowed outside of a label.', this.lineNumber, this.currentColumn));
-                }
-            } else if (this.end) {
-                this.errors.push(new ParseError('No characters are allowed outside of a label', this.lineNumber, this.currentColumn))
-            } else {
-                if (character === ')') {
-                    this.end = this.currentColumn;
-                } else {
-                    this.symbol = new Symbol(line.substring(this.currentColumn, line.indexOf(')')));
-                    this.currentColumn = this.symbol.currentColumn + 1;
-                }
-            }
+        // Assume that first character is (
+        this.symbol = new Symbol(line.substring(1, line.indexOf(')')));
+        this.length = this.symbol.length + 2;
+
+        if (line.length > this.length) {
+            this.errors.push(new ParseError('Invalid characters after label', lineNumber, this.length));
         }
     }
 }
